@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python servidor_demo.py
+python servidor1.py

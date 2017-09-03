@@ -3,7 +3,7 @@ import os
 serverSocket = socket(AF_INET, SOCK_STREAM)
 
 serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-serverSocket.bind(('127.0.0.1', 1240))
+serverSocket.bind(('127.0.0.1', 9100))
 serverSocket.listen(1);
 
 def parse_headers (data):
@@ -22,7 +22,8 @@ while True:
   try:
     message = connectionSocket.recv(1024)
     
-
+    #message= parse_headers(message)
+    #print(message)
     filename = message.split()[1]
     print(filename)
     f = open(filename[1:])

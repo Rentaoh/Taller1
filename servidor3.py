@@ -8,7 +8,7 @@ html = """<!DOCTYPE html>
 """
 
 import socket
-addr = socket.getaddrinfo('127.0.0.1', 1240)[0][-1]
+addr = socket.getaddrinfo('127.0.0.1', 9100)[0][-1]
 
 s = socket.socket()
 s.bind(addr)
