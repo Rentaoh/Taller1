@@ -1,31 +1,41 @@
-html = """<!DOCTYPE html>
-<html>
-    <head> <title>ESP8266 Pins</title> </head>
-    <body> <h1>ESP8266 Pins</h1>
-        <table border="1"> <tr><th>Pin</th><th>Value</th></tr> %s </table>
-    </body>
-</html>
-"""
-
 import socket
-addr = socket.getaddrinfo('127.0.0.1', 9100)[0][-1]
+import os, os.path
+import time
+import json
 
-s = socket.socket()
-s.bind(addr)
-s.listen(1)
+sockfile = "./communicate.sock"
 
-print('listening on', addr)
+if os.path.exists( sockfile ):
+  os.remove( sockfile )
 
+print ("Opening socket...")
+
+server = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+server.bind(('127.0.0.1', 9100))
+server.listen(5)
+
+print ("Listening...")
 while True:
-    cl, addr = s.accept()
-    print('client connected from', addr)
-    cl_file = cl.makefile('rwb', 0)
-    while True:
-        line = cl_file.readline()
-        if not line or line == b'\r\n':
+  conn, addr = server.accept()
+
+  print ("accepted connection")
+
+  while True: 
+
+    data = conn.recv( 1024 )
+    if not data:
+        break
+    else:
+        print ("-" * 20)
+        dump = [{'Host':'0.0.0.0:9100','Connection':''}]
+
+        print (json.dumps(data))
+        if "DONE" == data:
             break
-    rows = ['<tr><td>%s</td><td>%d</td></tr>' % (str(p), p.value()) for p in pins]
-    response = html % '\n'.join(rows)
-    print(response)
-    cl.send(response)
-    cl.close()
+print ("-" * 20)
+print ("Shutting down...")
+
+server.close()
+os.remove( sockfile )
+
+print ("Done")
